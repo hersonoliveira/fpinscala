@@ -136,4 +136,33 @@ object List { // `List` companion object. Contains functions for creating and wo
     case (_, Nil) => Nil
     case (Cons(a, as), Cons(x, xs)) => Cons(f(a,x), zipWith(as, xs)(f))
   }
+
+  // Works but code is a mess
+  def hasSubsequenceOld[A](sup: List[A], sub: List[A]): Boolean = {
+    def loop(l1: List[A], l2: List[A], isSub: Boolean): Boolean = (l1, l2) match {
+      case (Nil, _) => false
+      case (_, Nil) => if (isSub) true else false
+      case (Cons(a, as), Cons(x, xs)) => {
+        if (a == x) loop(as, xs, true)
+        else if (isSub) false
+        else loop(as, Cons(x, xs), isSub)
+      }
+    }
+    if (sub == Nil) true
+    else loop(sup, sub, false)
+  }
+
+  def startsWith[A](l: List[A], prefix: List[A]): Boolean = (l, prefix) match {
+    case (_, Nil) => true
+    case (Cons(x, xs), Cons(a, as)) if x == a => startsWith(xs, as)
+    case _ => false
+  }
+
+  def hasSubsequence[A](sup: List[A], sub: List[A]): Boolean = sup match {
+    case Nil => sub == Nil
+    case _ if startsWith(sup, sub) => true
+    case Cons(_, xs) => hasSubsequence(xs, sub)
+  }
+
+
 }
